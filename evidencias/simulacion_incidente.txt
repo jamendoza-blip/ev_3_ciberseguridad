@@ -1,0 +1,35 @@
+
+[21:50:51] === 1. Trafico normal (usuario legitimo) ===
+ login alumno -> 200 | dashboard -> 200
+ login alumno -> 200 | dashboard -> 200
+ login alumno -> 200 | dashboard -> 200
+ login alumno -> 200 | dashboard -> 200
+ login alumno -> 200 | dashboard -> 200
+
+[21:50:56] === 2. Fuerza bruta contra admin (diccionario) ===
+ admin/123456    -> 401
+ admin/password  -> 401
+ admin/admin     -> 401
+ admin/qwerty    -> 401
+ admin/letmein   -> 401
+ admin/root      -> 429
+ admin/toor      -> 429
+ admin/secret    -> 429
+ admin/admin1    -> 429
+ admin/pass      -> 429
+
+[21:51:02] === 3. Inyecciones (SQLi / XSS / SSTI) ===
+ SQLi "admin' --" -> 401
+ SQLi "x' OR '1'='1" -> 401
+ SQLi "' UNION SELECT 1,2,3,4,5 --" -> 401
+ bio '<script>alert(document.cookie)</script>' -> 200
+ bio '<img src=x onerror=alert(1)>' -> 200
+ bio '{{7*7}}' -> 200
+ bio '{{cycler.__init__.__globals__.os.popen(r' -> 200
+
+[21:51:02] === 4. CSRF (formulario externo sin token) ===
+ POST /update_bio sin token -> 403
+ POST /update_bio sin token -> 403
+ POST /update_bio sin token -> 403
+
+Listo. Revisar Grafana: http://localhost:3000 (dashboard SecureDev) y docker logs securedev-app

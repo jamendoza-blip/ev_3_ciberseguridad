@@ -1,0 +1,16 @@
+### 1) SQLi en login (con token CSRF valido)
+  username="admin' --"      -> HTTP 401 (acceso denegado)
+  username="x' OR '1'='1"   -> HTTP 401 (acceso denegado)
+### 2) Cookie falsificada 'user_session=admin' (cookie del codigo original)
+  GET /dashboard -> HTTP 302 Location: /login
+### 3) CSRF: POST /update_bio sin token (sesion valida)
+  -> 403
+### 4) XSS + SSTI almacenados (se guardan como texto y se muestran escapados)
+   <p><b>Biografía:</b> &lt;script&gt;alert(1)&lt;/script&gt; {{7*7}}</p>
+### 5) Passwords en la BD (hash scrypt)
+  admin scrypt:32768:8:1$hlyUmLN2I0NFrYwj$572a4cc6675...
+  alumno scrypt:32768:8:1$bVNsS933xEvGgBPJ$9d97f70a966...
+### 6) Usuario del proceso en el contenedor
+  uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+### 7) Cookie de sesion emitida
+  sd_session=eyJfY3NyZiI6InRHa29... ; HttpOnly; Path=/; SameSite=Strict (firmada)
