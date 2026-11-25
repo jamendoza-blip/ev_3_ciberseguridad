@@ -5,5 +5,6 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
 RUN python init_db.py
+ENV FLASK_DEBUG=1
 EXPOSE 5000
-CMD ["flask", "--app", "app", "run", "--host", "0.0.0.0", "--port", "5000", "--debug"]
+CMD ["flask", "--app", "app", "run", "--host", "0.0.0.0", "--port", "5000"]
