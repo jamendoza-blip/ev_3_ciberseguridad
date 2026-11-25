@@ -1,0 +1,59 @@
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: seguridad-produccion
+    folder: SecureDev
+    interval: 10s
+    rules:
+      - uid: alerta-fuerza-bruta
+        title: Fuerza bruta en login
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels: { severity: alta }
+        annotations:
+          summary: "Más de 5 logins fallidos en 1 minuto"
+          runbook: "Revisar IP origen en logs de auditoría (docker logs securedev-app); bloqueo automático activo"
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model: { refId: A, instant: true, expr: 'sum(increase(securedev_login_attempts_total{result="failure"}[1m])) or vector(0)' }
+          - refId: C
+            datasourceUid: __expr__
+            model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [5] } } ] }
+      - uid: alerta-inyeccion
+        title: Intentos de inyección (SQLi/XSS/SSTI)
+        condition: C
+        for: 0s
+        noDataState: OK
+        execErrState: Error
+        labels: { severity: alta }
+        annotations:
+          summary: "Se detectaron entradas con patrones de ataque en formularios"
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model: { refId: A, instant: true, expr: 'sum(increase(securedev_suspicious_input_total[1m])) or vector(0)' }
+          - refId: C
+            datasourceUid: __expr__
+            model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [0] } } ] }
+      - uid: alerta-app-caida
+        title: Aplicación fuera de servicio
+        condition: C
+        for: 30s
+        noDataState: Alerting
+        execErrState: Error
+        labels: { severity: critica }
+        annotations:
+          summary: "Prometheus no puede leer las métricas de securedev-app"
+        data:
+          - refId: A
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: prometheus
+            model: { refId: A, instant: true, expr: 'max(up{job="securedev-app"}) or vector(0)' }
+          - refId: C
+            datasourceUid: __expr__
+            model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: lt, params: [1] } } ] }

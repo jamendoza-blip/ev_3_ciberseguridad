@@ -1,0 +1,33 @@
+jenkins:
+  systemMessage: "SecureDev - Pipeline DevSecOps (OCY1102 EV3)"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_USER}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+unclassified:
+  location:
+    url: "http://localhost:8088/"
+jobs:
+  - script: >
+      pipelineJob('securedev-pipeline') {
+        description('CI/CD con controles de seguridad: secretos, SCA, SAST, pruebas, imagen, despliegue y DAST (OWASP ZAP)')
+        logRotator { numToKeep(30) }
+        properties { pipelineTriggers { triggers { pollSCM { scmpoll_spec('H/2 * * * *') } } } }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('file:///repo') }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+          }
+        }
+      }

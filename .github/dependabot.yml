@@ -1,0 +1,29 @@
+# Dependabot: revisa semanalmente dependencias Python y la imagen base Docker
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/app"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "security"]
+    commit-message:
+      prefix: "deps"
+    groups:
+      flask-stack:
+        patterns: ["flask", "werkzeug", "jinja2", "itsdangerous", "markupsafe", "click"]
+
+  - package-ecosystem: "docker"
+    directory: "/app"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "docker"]
+    commit-message:
+      prefix: "deps(docker)"
+
+  - package-ecosystem: "docker"
+    directory: "/infra/jenkins"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "ci"]
