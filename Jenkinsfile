@@ -85,7 +85,7 @@ pipeline {
                           pip install -q --disable-pip-version-check pip-audit >/dev/null &&
                           pip-audit -r app/requirements.txt -f json -o reports/pip_audit.json --progress-spinner off;
                           rc=$?;
-                          pip-audit -r app/requirements.txt --progress-spinner off --desc on | tee reports/pip_audit.txt;
+                          pip-audit -r app/requirements.txt --progress-spinner off | tee reports/pip_audit.txt;
                           exit $rc'
                     ''')
                     gate(results, 'Dependencias', rc, 'pip-audit encontro dependencias con CVE conocidas')
