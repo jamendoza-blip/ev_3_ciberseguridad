@@ -1,0 +1,4 @@
+__pycache__/
+*.db
+csrf_poc.html
+README_original.txt

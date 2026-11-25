@@ -24,11 +24,16 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setenv('DATABASE', str(tmp_path / 'test.db'))
     monkeypatch.setenv('SECRET_KEY', 'clave-solo-para-pruebas')
     monkeypatch.setenv('METRICS_PORT', '0')  # no abrir puerto de metricas en pruebas
-    for mod in ('app', 'init_db'):
-        sys.modules.pop(mod, None)
+    sys.modules.pop('init_db', None)
     init_db = importlib.import_module('init_db')
     init_db.crear_base_de_datos()
+    # La app se importa una sola vez (las metricas Prometheus no admiten registrarse dos veces);
+    # el estado se reinicia en cada prueba.
     app_module = importlib.import_module('app')
+    if hasattr(app_module, 'DATABASE'):
+        app_module.DATABASE = os.environ['DATABASE']
+    if hasattr(app_module, '_failures'):
+        app_module._failures.clear()
     app_module.app.config['TESTING'] = True
     with app_module.app.test_client() as c:
         c.db_path = os.environ['DATABASE'] if os.path.exists(os.environ['DATABASE']) else str(tmp_path / 'vulnerable.db')
