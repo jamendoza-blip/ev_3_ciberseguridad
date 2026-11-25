@@ -1,0 +1,5 @@
+b0fdfa7 2026-11-24 22:09:52 -0300 jamendoza-blip Merge pull request #1 from jamendoza-blip/dependabot/docker/infra/jenkins/docker-29.9-cli
+3e71602 2026-11-25 01:08:16 +0000 dependabot[bot] chore(deps): bump docker from 28.1-cli to 29.9-cli in /infra/jenkins
+f973a41 2026-11-24 21:59:19 -0300 Jassack Mendoza docs: ajuste en identificación del informe
+afa07dc 2026-11-24 21:59:09 -0300 Jassack Mendoza docs: README e informe Desarrollo EV3
+f7edd35 2026-11-24 21:51:43 -0300 Jassack Mendoza docs: evidencias de pipeline (builds 4 y 6), explotación manual y simulación de incidente
