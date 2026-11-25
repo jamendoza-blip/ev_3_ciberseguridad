@@ -4,6 +4,7 @@ Cada prueba expresa un requisito de seguridad. Sobre el codigo vulnerable origin
 fallan; despues de la remediacion deben pasar todas.
 """
 import importlib
+import inspect
 import os
 import re
 import sqlite3
@@ -84,7 +85,12 @@ def test_csrf_sin_token_es_rechazado(client):
 
 # --- A07 Autenticacion y sesiones -------------------------------------------
 def test_cookie_de_sesion_no_es_falsificable(client):
-    resp = client.get('/dashboard', headers={'Cookie': 'user_session=admin'})
+    # Un atacante fija a mano la cookie del original ('user_session=admin')
+    if 'server_name' in inspect.signature(client.set_cookie).parameters:  # Werkzeug < 2.3
+        client.set_cookie('localhost', 'user_session', 'admin')
+    else:
+        client.set_cookie('user_session', 'admin')
+    resp = client.get('/dashboard')
     assert resp.status_code == 302 and '/login' in resp.headers['Location']
 
 
