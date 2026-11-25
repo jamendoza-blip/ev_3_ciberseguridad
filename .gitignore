@@ -5,3 +5,10 @@ __pycache__/
 venv/
 reports/
 .pytest_cache/
+
+# Documentos de entrega: no se versionan
+*.docx
+*.pdf
+*.doc
+*.xlsx
+*.pptx
