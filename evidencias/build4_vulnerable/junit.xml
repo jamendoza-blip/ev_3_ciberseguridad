@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="10" skipped="0" tests="10" time="0.356" timestamp="2026-11-25T00:45:04.487535+00:00" hostname="7a11f79e26e4"><testcase classname="tests.test_security" name="test_sqli_no_permite_saltar_login" time="0.124"><failure message="AssertionError: SQL injection permite iniciar sesion sin password&#10;assert 302 != 302&#10; +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_sqli_no_permite_saltar_login(client):
+        resp = login(client, "admin' --", 'cualquiera')
+&gt;       assert resp.status_code != 302, 'SQL injection permite iniciar sesion sin password'
+E       AssertionError: SQL injection permite iniciar sesion sin password
+E       assert 302 != 302
+E        +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:56: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_sqli_or_1_1" time="0.015"><failure message="assert 302 != 302&#10; +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_sqli_or_1_1(client):
+        resp = login(client, "x' OR '1'='1", "x' OR '1'='1")
+&gt;       assert resp.status_code != 302
+E       assert 302 != 302
+E        +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:61: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_xss_almacenado_se_escapa" time="0.024"><failure message="AssertionError: assert '&lt;script&gt;alert(1)&lt;/script&gt;' not in '\n    &lt;h1&gt;P...ón&lt;/a&gt;\n    '&#10;  &#10;  '&lt;script&gt;alert(1)&lt;/script&gt;' is contained here:&#10;    &#10;        &lt;h1&gt;Panel de alumno&lt;/h1&gt;&#10;        &lt;p&gt;&lt;b&gt;Rol:&lt;/b&gt; user&lt;/p&gt;&#10;        &lt;p&gt;&lt;b&gt;Biografía:&lt;/b&gt; &lt;script&gt;alert(1)&lt;/script&gt;&lt;/p&gt;&#10;        &lt;hr&gt;...&#10;  &#10;  ...Full output truncated, use '-vv' to show">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_xss_almacenado_se_escapa(client):
+        assert login(client, 'alumno', PASSWORDS['alumno']).status_code == 302
+        update_bio(client, '&lt;script&gt;alert(1)&lt;/script&gt;')
+        body = client.get('/dashboard').get_data(as_text=True)
+&gt;       assert '&lt;script&gt;alert(1)&lt;/script&gt;' not in body
+E       AssertionError: assert '&lt;script&gt;alert(1)&lt;/script&gt;' not in '\n    &lt;h1&gt;P...ón&lt;/a&gt;\n    '
+E         
+E         '&lt;script&gt;alert(1)&lt;/script&gt;' is contained here:
+E           
+E               &lt;h1&gt;Panel de alumno&lt;/h1&gt;
+E               &lt;p&gt;&lt;b&gt;Rol:&lt;/b&gt; user&lt;/p&gt;
+E               &lt;p&gt;&lt;b&gt;Biografía:&lt;/b&gt; &lt;script&gt;alert(1)&lt;/script&gt;&lt;/p&gt;
+E               &lt;hr&gt;...
+E         
+E         ...Full output truncated, use '-vv' to show
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:68: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_ssti_no_se_evalua" time="0.024"><failure message="AssertionError: La biografia se evalua como plantilla Jinja (SSTI)&#10;assert '49' not in '\n    &lt;h1&gt;P...ón&lt;/a&gt;\n    '&#10;  &#10;  '49' is contained here:&#10;    &#10;        &lt;h1&gt;Panel de alumno&lt;/h1&gt;&#10;        &lt;p&gt;&lt;b&gt;Rol:&lt;/b&gt; user&lt;/p&gt;&#10;        &lt;p&gt;&lt;b&gt;Biografía:&lt;/b&gt; 49&lt;/p&gt;&#10;  ?                          ++...&#10;  &#10;  ...Full output truncated, use '-vv' to show">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_ssti_no_se_evalua(client):
+        assert login(client, 'alumno', PASSWORDS['alumno']).status_code == 302
+        update_bio(client, '{{7*7}}')
+        body = client.get('/dashboard').get_data(as_text=True)
+&gt;       assert '49' not in body, 'La biografia se evalua como plantilla Jinja (SSTI)'
+E       AssertionError: La biografia se evalua como plantilla Jinja (SSTI)
+E       assert '49' not in '\n    &lt;h1&gt;P...ón&lt;/a&gt;\n    '
+E         
+E         '49' is contained here:
+E           
+E               &lt;h1&gt;Panel de alumno&lt;/h1&gt;
+E               &lt;p&gt;&lt;b&gt;Rol:&lt;/b&gt; user&lt;/p&gt;
+E               &lt;p&gt;&lt;b&gt;Biografía:&lt;/b&gt; 49&lt;/p&gt;
+E         ?                          ++...
+E         
+E         ...Full output truncated, use '-vv' to show
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:75: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_csrf_sin_token_es_rechazado" time="0.021"><failure message="assert 302 in (400, 403)&#10; +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_csrf_sin_token_es_rechazado(client):
+        assert login(client, 'alumno', PASSWORDS['alumno']).status_code == 302
+        resp = client.post('/update_bio', data={'nueva_bio': 'ESTA CUENTA FUE HACKEADA'})
+&gt;       assert resp.status_code in (400, 403)
+E       assert 302 in (400, 403)
+E        +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:82: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_cookie_de_sesion_no_es_falsificable" time="0.015"><failure message="assert (200 == 302)&#10; +  where 200 = &lt;WrapperTestResponse streamed [200 OK]&gt;.status_code">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_cookie_de_sesion_no_es_falsificable(client):
+        # Un atacante fija a mano la cookie del original ('user_session=admin')
+        if 'server_name' in inspect.signature(client.set_cookie).parameters:  # Werkzeug &lt; 2.3
+            client.set_cookie('localhost', 'user_session', 'admin')
+        else:
+            client.set_cookie('user_session', 'admin')
+        resp = client.get('/dashboard')
+&gt;       assert resp.status_code == 302 and '/login' in resp.headers['Location']
+E       assert (200 == 302)
+E        +  where 200 = &lt;WrapperTestResponse streamed [200 OK]&gt;.status_code
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:94: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_cookie_con_flags_de_seguridad" time="0.014"><failure message="AssertionError: assert 'HttpOnly' in 'user_session=alumno; Path=/'">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_cookie_con_flags_de_seguridad(client):
+        resp = login(client, 'alumno', PASSWORDS['alumno'])
+        cookie = ' '.join(resp.headers.getlist('Set-Cookie'))
+&gt;       assert 'HttpOnly' in cookie
+E       AssertionError: assert 'HttpOnly' in 'user_session=alumno; Path=/'
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:100: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_bloqueo_por_fuerza_bruta" time="0.020"><failure message="AssertionError: No hay limite de intentos fallidos&#10;assert 302 == 429&#10; +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_bloqueo_por_fuerza_bruta(client):
+        for _ in range(5):
+            login(client, 'admin', 'incorrecta')
+        resp = login(client, 'admin', PASSWORDS['admin'])
+&gt;       assert resp.status_code == 429, 'No hay limite de intentos fallidos'
+E       AssertionError: No hay limite de intentos fallidos
+E       assert 302 == 429
+E        +  where 302 = &lt;WrapperTestResponse streamed [302 FOUND]&gt;.status_code
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:108: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_passwords_no_en_texto_plano" time="0.013"><failure message="AssertionError: Password de admin en texto plano&#10;assert 'admin123' != 'admin123'&#10; +  where 'admin123' = &lt;built-in method get of dict object at 0x797ef2aa0940&gt;('admin')&#10; +    where &lt;built-in method get of dict object at 0x797ef2aa0940&gt; = {'admin': 'admin123', 'alumno': '12345'}.get">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_passwords_no_en_texto_plano(client):
+        conn = sqlite3.connect(client.db_path)
+        rows = conn.execute('SELECT username, password FROM usuarios').fetchall()
+        conn.close()
+        for username, stored in rows:
+&gt;           assert stored != PASSWORDS.get(username), f'Password de {username} en texto plano'
+E           AssertionError: Password de admin en texto plano
+E           assert 'admin123' != 'admin123'
+E            +  where 'admin123' = &lt;built-in method get of dict object at 0x797ef2aa0940&gt;('admin')
+E            +    where &lt;built-in method get of dict object at 0x797ef2aa0940&gt; = {'admin': 'admin123', 'alumno': '12345'}.get
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:117: AssertionError</failure></testcase><testcase classname="tests.test_security" name="test_cabeceras_de_seguridad" time="0.015"><failure message="AssertionError: Falta cabecera Content-Security-Policy&#10;assert 'Content-Security-Policy' in Headers([('Content-Type', 'text/html; charset=utf-8'), ('Content-Length', '274')])&#10; +  where Headers([('Content-Type', 'text/html; charset=utf-8'), ('Content-Length', '274')]) = &lt;WrapperTestResponse streamed [200 OK]&gt;.headers">client = &lt;FlaskClient &lt;Flask 'app'&gt;&gt;
+
+    def test_cabeceras_de_seguridad(client):
+        resp = client.get('/login')
+        for header in ('Content-Security-Policy', 'X-Frame-Options', 'X-Content-Type-Options'):
+&gt;           assert header in resp.headers, f'Falta cabecera {header}'
+E           AssertionError: Falta cabecera Content-Security-Policy
+E           assert 'Content-Security-Policy' in Headers([('Content-Type', 'text/html; charset=utf-8'), ('Content-Length', '274')])
+E            +  where Headers([('Content-Type', 'text/html; charset=utf-8'), ('Content-Length', '274')]) = &lt;WrapperTestResponse streamed [200 OK]&gt;.headers
+
+/var/jenkins_home/workspace/securedev-pipeline/tests/test_security.py:124: AssertionError</failure></testcase></testsuite></testsuites>

@@ -435,16 +435,16 @@ The web/application server is leaking version information via the "Server" HTTP 
   * Attack: ``
   * Evidence: `Werkzeug/2.2.2 Python/3.12.16`
   * Other Info: ``
-* URL: http://securedev-app:5000/robots.txt
-  * Node Name: `http://securedev-app:5000/robots.txt`
+* URL: http://securedev-app:5000/sitemap.xml
+  * Node Name: `http://securedev-app:5000/sitemap.xml`
   * Method: `GET`
   * Parameter: ``
   * Attack: ``
   * Evidence: `Werkzeug/2.2.2 Python/3.12.16`
   * Other Info: ``
-* URL: http://securedev-app:5000/sitemap.xml
-  * Node Name: `http://securedev-app:5000/sitemap.xml`
-  * Method: `GET`
+* URL: http://securedev-app:5000/login
+  * Node Name: `http://securedev-app:5000/login ()(password,username)`
+  * Method: `POST`
   * Parameter: ``
   * Attack: ``
   * Evidence: `Werkzeug/2.2.2 Python/3.12.16`

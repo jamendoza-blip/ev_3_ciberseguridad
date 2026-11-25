@@ -1,5 +1,5 @@
+3376fd2 2026-11-24 21:44:26 -0300 Jassack Mendoza test: prueba de cookie falsificable compatible con Werkzeug 2.2 y 3.x
 4036d18 2026-11-24 21:42:38 -0300 Jassack Mendoza fix(docker): modo debug vía FLASK_DEBUG (compatible con Flask 2.2)
 bb8ee69 2026-11-24 21:38:45 -0300 Jassack Mendoza chore: script para disparar el pipeline
 9c396ec 2026-11-24 21:38:45 -0300 Jassack Mendoza ci: salida compacta de pip-audit en consola
 dddc3d3 2026-11-24 21:36:31 -0300 Jassack Mendoza ci: pipeline DevSecOps en Jenkins (SCA, SAST, tests, Trivy, ZAP), Dependabot y monitoreo
-34f5f51 2026-11-24 21:34:06 -0300 Jassack Mendoza chore: código base vulnerable entregado (línea base de auditoría)

