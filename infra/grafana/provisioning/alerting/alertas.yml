@@ -13,13 +13,13 @@ groups:
         execErrState: Error
         labels: { severity: alta }
         annotations:
-          summary: "Más de 5 logins fallidos en 1 minuto"
+          summary: "Más de 5 logins fallidos o bloqueados en 1 minuto"
           runbook: "Revisar IP origen en logs de auditoría (docker logs securedev-app); bloqueo automático activo"
         data:
           - refId: A
             relativeTimeRange: { from: 300, to: 0 }
             datasourceUid: prometheus
-            model: { refId: A, instant: true, expr: 'sum(increase(securedev_login_attempts_total{result="failure"}[1m])) or vector(0)' }
+            model: { refId: A, instant: true, expr: 'sum(increase(securedev_login_attempts_total{result=~"failure|blocked"}[1m])) or vector(0)' }
           - refId: C
             datasourceUid: __expr__
             model: { refId: C, type: threshold, expression: A, conditions: [ { evaluator: { type: gt, params: [5] } } ] }
