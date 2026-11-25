@@ -1,4 +1,4 @@
-FROM docker:28.1-cli AS dockercli
+FROM docker:29.9-cli AS dockercli
 
 FROM jenkins/jenkins:lts-jdk21
 USER root
